@@ -7,8 +7,13 @@ services:
     container_name: weather_app
     ports:
       - "3000:3000"
-    env_file:
-      - .env
+    environment:
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=weather
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - REDIS_URL=redis://redis:6379
     depends_on:
       - redis
       - postgres
@@ -17,17 +22,32 @@ services:
     build:
       context: ./producer
     container_name: weather_producer
-    env_file:
-      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - QUEUE_NAME=weather:jobs
+      - INTERVAL_SECONDS=60
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=weather
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
     depends_on:
       - redis
+      - postgres
     restart: unless-stopped
   worker:
     build:
       context: ./worker
     container_name: weather_worker
-    env_file:
-      - .env
+    environment:
+      - REDIS_URL=redis://redis:6379
+      - QUEUE_NAME=weather:jobs
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=weather
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - OPEN_METEO_URL=https://api.open-meteo.com/v1/forecast
     depends_on:
       - redis
       - postgres
@@ -37,7 +57,7 @@ services:
     container_name: weather_redis
     ports:
       - "6379:6379"
-    restart: unless-stopped
+    restart: unless-stopped  
   postgres:
     image: postgres:15
     container_name: weather_postgres
@@ -45,10 +65,11 @@ services:
       POSTGRES_DB: weather
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
-    ports:
-      - "5432:5432"
     volumes:
       - pgdata:/var/lib/postgresql/data
+      - ./postgres/init.sql:/docker-entrypoint-initdb.d/init.sql
+    ports:
+      - "5432:5432"
     restart: unless-stopped
 
 volumes:
