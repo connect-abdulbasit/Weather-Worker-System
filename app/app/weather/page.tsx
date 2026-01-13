@@ -30,8 +30,7 @@ export default function WeatherPage() {
             } else {
                 setError(data.error || 'Failed to fetch weather data');
             }
-        } catch (err) {
-            console.error('Error fetching weather data:', err);
+        } catch {
             setError('Failed to fetch weather data. Please try again.');
         } finally {
             setLoading(false);
@@ -40,7 +39,6 @@ export default function WeatherPage() {
 
     useEffect(() => {
         fetchWeatherData();
-        // Refresh data every 10 seconds
         const interval = setInterval(fetchWeatherData, 10000);
         return () => clearInterval(interval);
     }, []);
@@ -61,7 +59,6 @@ export default function WeatherPage() {
         return 'text-blue-600';
     };
 
-    // Ensure we have data for all 4 cities, even if not in database
     const standardCities = ['London', 'New York', 'Tokyo', 'Cairo'];
     const cityDataMap = new Map(weatherData.map(item => [item.city, item]));
     
@@ -78,7 +75,6 @@ export default function WeatherPage() {
     return (
         <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Header with Navigation */}
                 <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
                     <div>
                         <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
@@ -116,7 +112,6 @@ export default function WeatherPage() {
                     </div>
                 ) : (
                     <>
-                        {/* Weather Table */}
                         <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
                             <div className="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50">
                                 <h2 className="text-xl font-bold text-gray-900">Weather Data</h2>
@@ -180,7 +175,6 @@ export default function WeatherPage() {
                             </div>
                         </div>
 
-                        {/* Last Sync Timestamp - Below the table as per requirements */}
                         {lastSync && (
                             <div className="mt-6 text-center">
                                 <p className="text-sm text-gray-600">

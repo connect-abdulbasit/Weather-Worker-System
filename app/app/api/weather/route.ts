@@ -21,7 +21,6 @@ export async function GET() {
         END
     `);
 
-    // Use updated_at for "last sync" (when DB was last updated)
     const syncResult = await pool.query(`
       SELECT MAX(updated_at) as last_sync
       FROM weather_data
@@ -38,7 +37,7 @@ export async function GET() {
       city: row.city,
       temperature: parseFloat(row.temperature),
       windSpeed: parseFloat(row.wind_speed),
-      lastUpdated: new Date(row.observed_at).toISOString(), // Weather observation time
+      lastUpdated: new Date(row.observed_at).toISOString(), 
     }));
 
     const lastSync = syncResult.rows[0]?.last_sync

@@ -102,8 +102,6 @@ async function updateJobStatus(jobId: string, status: 'pending' | 'success' | 'f
 async function startWorker(): Promise<void>{
     try{
         await redisClient.connect();
-        await pool.query('SELECT 1');
-        console.log('✅ Connected to Redis and PostgreSQL');
 
         while(true){
             try {
@@ -114,7 +112,6 @@ async function startWorker(): Promise<void>{
                 
                 if(result){
                     const jobData = JSON.parse(result.element) as JobPayload;
-                    console.log(`🔄 Processing job ${jobData.id}`);
                     
                     await updateJobStatus(jobData.id, 'pending');
                     
@@ -122,7 +119,7 @@ async function startWorker(): Promise<void>{
                     
                     for(const city of jobData.cities){
                         if (!city.latitude || !city.longitude) {
-                            console.error(`❌ Invalid city data:`, city);
+                            console.error('Invalid city data:', city);
                             allCitiesSuccess = false;
                             continue;
                         }
@@ -131,7 +128,6 @@ async function startWorker(): Promise<void>{
                             const url = `${config.openMeteoUrl}?latitude=${city.latitude}&longitude=${city.longitude}&current=temperature_2m,windspeed_10m`;
                             const response = await axios.get<OpenMeteoResponse>(url);
                             const data = response.data;
-                            console.log(data.current.time);
                             await pool.query(
                                 `INSERT INTO weather_data (city, temperature, wind_speed, observed_at) 
                                  VALUES ($1, $2, $3, $4)
@@ -142,22 +138,20 @@ async function startWorker(): Promise<void>{
                                      observed_at = EXCLUDED.observed_at`,
                                 [city.name, data.current.temperature_2m, data.current.windspeed_10m, new Date(data.current.time).toISOString()]
                             );
-                            console.log(`✅ Processed ${city.name}`);
                         } catch (cityError) {
-                            console.error(`❌ Error processing ${city.name}:`, cityError);
+                            console.error(`Error processing ${city.name}:`, cityError);
                             allCitiesSuccess = false;
                         }
                     }
                     
                     await updateJobStatus(jobData.id, allCitiesSuccess ? 'success' : 'failed');
-                    console.log(`✅ Completed job ${jobData.id} with status: ${allCitiesSuccess ? 'success' : 'failed'}`);
                 }
             } catch (error) {
-                console.error('❌ Error processing job:', error);
+                console.error('Error processing job:', error);
             }
         }
     } catch (error) {
-        console.error('❌ Fatal error in worker:', error);
+        console.error('Fatal error in worker:', error);
         throw error;
     }
 }

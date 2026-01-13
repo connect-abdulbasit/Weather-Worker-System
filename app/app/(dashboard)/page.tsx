@@ -23,7 +23,6 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(false);
   const [fetchingJobs, setFetchingJobs] = useState(false);
   
-  // Calculate statistics
   const stats = useMemo(() => {
     const total = jobs.length;
     const success = jobs.filter(j => j.status === 'success').length;
@@ -32,11 +31,15 @@ export default function Dashboard() {
     return { total, success, pending, failed };
   }, [jobs]);
   
-  // Fetch jobs on component mount and periodically
   const fetchJobs = async () => {
     try {
       setFetchingJobs(true);
       const response = await fetch('/api/job');
+      
+      if (!response.ok) {
+        return;
+      }
+      
       const data = await response.json();
       
       if (data.success && data.jobs) {
@@ -46,7 +49,7 @@ export default function Dashboard() {
           timestamp: new Date(job.timestamp).toLocaleString(),
         })));
       }
-    } catch (error) {
+    } catch(error) {
       console.error('Error fetching jobs:', error);
     } finally {
       setFetchingJobs(false);
@@ -55,7 +58,6 @@ export default function Dashboard() {
 
   useEffect(() => {
     fetchJobs();
-    // Poll for job updates every 3 seconds
     const interval = setInterval(fetchJobs, 3000);
     return () => clearInterval(interval);
   }, []);
@@ -70,17 +72,19 @@ export default function Dashboard() {
         },
       });
       
+      if (!response.ok) {
+        alert('Failed to enqueue job. Please try again.');
+        return;
+      }
+      
       const data = await response.json();
       
       if (data.success) {
-        // Refresh jobs list
         await fetchJobs();
       } else {
-        console.error('Failed to enqueue job:', data.error);
         alert('Failed to enqueue job. Please try again.');
       }
-    } catch (error) {
-      console.error('Error enqueueing job:', error);
+    } catch {
       alert('Error enqueueing job. Please try again.');
     } finally {
       setLoading(false);
@@ -117,7 +121,6 @@ export default function Dashboard() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Header with Navigation */}
         <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
             <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
@@ -135,7 +138,6 @@ export default function Dashboard() {
           </Link>
         </div>
 
-        {/* Statistics Cards */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6 hover:shadow-xl transition-shadow duration-200">
             <div className="flex items-center justify-between">
@@ -186,7 +188,6 @@ export default function Dashboard() {
           </div>
         </div>
 
-        {/* Fetch Weather Button */}
         <div className="mb-8">
           <button
             onClick={handleFetchWeather}
@@ -206,8 +207,7 @@ export default function Dashboard() {
             )}
           </button>
         </div>
-
-        {/* Jobs Table */}
+          
         <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
           <div className="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50 flex justify-between items-center">
             <h2 className="text-xl font-bold text-gray-900">Recent Job History</h2>

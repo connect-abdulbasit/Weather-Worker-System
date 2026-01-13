@@ -88,7 +88,6 @@ async function enqueueJob(): Promise<void> {
             'INSERT INTO job_history (job_id, status) VALUES ($1, $2) ON CONFLICT (job_id) DO NOTHING',
             [jobId, 'pending']
         );
-        console.log(`Job ${jobId} enqueued successfully`);
 
     } catch (error) {
         throw error;
@@ -97,10 +96,7 @@ async function enqueueJob(): Promise<void> {
 
 async function startScheduler(): Promise<void> {
     try {
-
         await redisClient.connect();
-        await pool.query('SELECT 1'); 
-        console.log('✅ Connected to Redis and PostgreSQL');
 
         await enqueueJob();
         setInterval(async () => {

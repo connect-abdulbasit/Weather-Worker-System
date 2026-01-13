@@ -2,7 +2,7 @@
 
 A full-stack weather data fetching system built with Next.js, Redis, PostgreSQL, and TypeScript. This system demonstrates a producer-consumer architecture with automated scheduling, job queuing, and real-time weather data updates.
 
-## 📦 Deliverables
+## Deliverables
 
 This repository contains all required components:
 
@@ -22,7 +22,7 @@ docker compose up --build
 
 That's it! The entire system will start automatically.
 
-## 🎯 Overview
+## Overview
 
 This system automatically fetches weather data for four major cities (London, New York, Tokyo, Cairo) using the Open-Meteo API. It features:
 
@@ -33,7 +33,7 @@ This system automatically fetches weather data for four major cities (London, Ne
 - **Modern Next.js frontend** with beautiful UI
 - **Fully containerized** with Docker Compose
 
-## 🏗️ Architecture
+## Architecture
 
 ```
 ┌─────────────┐         ┌─────────────┐
@@ -80,25 +80,25 @@ This system automatically fetches weather data for four major cities (London, Ne
    - Port: `5432`
    - Auto-initialized with schema on first run
 
-## ✨ Features
+## Features
 
-- 🎨 **Modern UI** with Tailwind CSS and gradient designs
-- 📊 **Real-time Dashboard** showing job statistics and history
-- 🌍 **Weather Data Table** displaying temperature, wind speed, and timestamps
-- ⚡ **Automated Scheduling** - jobs enqueued every 60 seconds
-- 🔄 **Manual Job Trigger** - fetch weather on-demand
-- 📈 **Job History Tracking** - monitor all job executions
-- 🐳 **Dockerized** - single command to run entire system
-- 🔒 **Type-Safe** - full TypeScript implementation
+- **Modern UI** with Tailwind CSS and gradient designs
+- **Real-time Dashboard** showing job statistics and history
+- **Weather Data Table** displaying temperature, wind speed, and timestamps
+- **Automated Scheduling** - jobs enqueued every 60 seconds
+- **Manual Job Trigger** - fetch weather on-demand
+- **Job History Tracking** - monitor all job executions
+- **Dockerized** - single command to run entire system
+- **Type-Safe** - full TypeScript implementation
 
-## 📋 Prerequisites
+## Prerequisites
 
 - **Docker** (version 20.10 or higher)
 - **Docker Compose** (version 2.0 or higher)
 
 That's it! No need to install Node.js, PostgreSQL, or Redis locally.
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
 - **Docker** (version 20.10 or higher)
@@ -131,13 +131,13 @@ That's it! No need to install Node.js, PostgreSQL, or Redis locally.
 
 **No additional setup required!** All dependencies are containerized.
 
-## 📁 Project Structure
+## Project Structure
 
 The repository contains all required deliverables:
 
 ```
 Weather-Worker-System/
-├── app/                    # ✅ Next.js frontend + API
+├── app/                    # Next.js frontend + API
 │   ├── app/
 │   │   ├── api/           # API routes
 │   │   │   ├── job/       # Job management endpoints
@@ -146,21 +146,21 @@ Weather-Worker-System/
 │   │   └── page.tsx       # Dashboard page
 │   ├── lib/               # Database and Redis clients
 │   └── Dockerfile
-├── producer/               # ✅ TypeScript scheduler service
+├── producer/               # TypeScript scheduler service
 │   ├── src/
 │   │   └── index.ts       # Producer logic
 │   └── Dockerfile
-├── worker/                # ✅ TypeScript consumer service
+├── worker/                # TypeScript consumer service
 │   ├── src/
 │   │   └── index.ts      # Worker logic
 │   └── Dockerfile
 ├── postgres/
 │   └── init.sql          # Database schema initialization
-├── docker-compose.yml     # ✅ Container orchestration
-└── README.md              # ✅ Setup and usage instructions
+├── docker-compose.yml     # Container orchestration
+└── README.md              # Setup and usage instructions
 ```
 
-## 🔌 API Endpoints
+## API Endpoints
 
 ### POST `/api/job`
 Enqueues a new weather fetching job.
@@ -215,7 +215,7 @@ Retrieves all stored weather data for the four standard cities.
 }
 ```
 
-## 🔧 Environment Variables
+## Environment Variables
 
 All services use environment variables configured in `docker-compose.yml`:
 
@@ -247,7 +247,7 @@ All services use environment variables configured in `docker-compose.yml`:
 - `POSTGRES_PASSWORD=postgres`
 - `OPEN_METEO_URL=https://api.open-meteo.com/v1/forecast`
 
-## 🛠️ Technologies Used
+## Technologies Used
 
 ### Frontend
 - **Next.js 16.1.1** - React framework with App Router
@@ -268,7 +268,7 @@ All services use environment variables configured in `docker-compose.yml`:
 - **uuid** - Unique identifier generation
 - **tsx** - TypeScript execution
 
-## 🔄 How It Works
+## How It Works
 
 ### 1. Manual Job Creation
 - User clicks "Fetch Weather Now" on the dashboard
@@ -294,7 +294,7 @@ All services use environment variables configured in `docker-compose.yml`:
 - Displays table with latest weather information
 - Shows "Last sync at [timestamp]" below the table
 
-## 📊 Database Schema
+## Database Schema
 
 ### `weather_data` Table
 Stores weather information for each city (one record per city).
@@ -320,7 +320,7 @@ Tracks all job executions.
 | `created_at` | TIMESTAMP | Job creation time |
 | `completed_at` | TIMESTAMP | Job completion time |
 
-## 🎨 UI Pages
+## UI Pages
 
 ### Dashboard (`/`)
 - **Fetch Weather Now** button - manually trigger a job
@@ -335,7 +335,7 @@ Tracks all job executions.
   - Last updated timestamp
 - **Last Sync** - Timestamp showing when database was last updated
 
-## 🐳 Docker Services
+## Docker Services
 
 | Service | Container Name | Port | Description |
 |---------|---------------|------|-------------|
@@ -345,7 +345,7 @@ Tracks all job executions.
 | `redis` | `weather_redis` | 6379 | Redis server |
 | `postgres` | `weather_postgres` | 5432 | PostgreSQL database |
 
-## 🛑 Stopping the System
+## Stopping the System
 
 Press `Ctrl+C` in the terminal, or run:
 
@@ -359,7 +359,7 @@ To remove volumes (clears database data):
 docker compose down -v
 ```
 
-## 🔍 Troubleshooting
+## Troubleshooting
 
 ### Services won't start
 - Ensure Docker and Docker Compose are installed and running
@@ -381,7 +381,7 @@ docker compose down -v
 - Verify worker is processing jobs: `docker compose logs worker`
 - Check API response: `curl http://localhost:3000/api/weather`
 
-## 📝 Development
+## Development
 
 ### Running services individually
 
@@ -433,11 +433,11 @@ LLEN weather:jobs
 LRANGE weather:jobs 0 -1
 ```
 
-## 📄 License
+## License
 
 This project is for educational purposes.
 
-## 👤 Author
+## Author
 
 Weather Worker System - Full-stack demonstration project
 
