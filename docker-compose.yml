@@ -1,0 +1,55 @@
+version: "3.9"
+
+services:
+  app:
+    build:
+      context: ./app
+    container_name: weather_app
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+  producer:
+    build:
+      context: ./producer
+    container_name: weather_producer
+    env_file:
+      - .env
+    depends_on:
+      - redis
+    restart: unless-stopped
+  worker:
+    build:
+      context: ./worker
+    container_name: weather_worker
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - postgres
+    restart: unless-stopped
+  redis:
+    image: redis:7
+    container_name: weather_redis
+    ports:
+      - "6379:6379"
+    restart: unless-stopped
+  postgres:
+    image: postgres:15
+    container_name: weather_postgres
+    environment:
+      POSTGRES_DB: weather
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    restart: unless-stopped
+
+volumes:
+  pgdata:
