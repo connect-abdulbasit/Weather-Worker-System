@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { Sun, Cloud, CloudRain, Loader2 } from 'lucide-react';
+import { Sun, Cloud, CloudRain, Loader2, ArrowLeft, Wind, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 
 interface WeatherData {
@@ -47,12 +47,18 @@ export default function WeatherPage() {
 
     const getWeatherIcon = (temperature: number) => {
         if (temperature >= 25) {
-            return <Sun className="h-5 w-5 text-amber-400" />;
+            return <Sun className="h-6 w-6 text-amber-500 animate-pulse" />;
         } else if (temperature >= 15) {
-            return <Cloud className="h-5 w-5 text-gray-400" />;
+            return <Cloud className="h-6 w-6 text-gray-500" />;
         } else {
-            return <CloudRain className="h-5 w-5 text-blue-400" />;
+            return <CloudRain className="h-6 w-6 text-blue-500" />;
         }
+    };
+
+    const getTemperatureColor = (temperature: number) => {
+        if (temperature >= 25) return 'text-red-600';
+        if (temperature >= 15) return 'text-orange-600';
+        return 'text-blue-600';
     };
 
     // Ensure we have data for all 4 cities, even if not in database
@@ -70,80 +76,99 @@ export default function WeatherPage() {
     });
 
     return (
-        <div className="min-h-screen bg-gray-50">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Header with Navigation */}
-                <div className="mb-8 flex justify-between items-center">
-                    <h1 className="text-3xl font-bold text-gray-900">Weather Data</h1>
+                <div className="mb-8 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                    <div>
+                        <h1 className="text-4xl font-bold bg-gradient-to-r from-gray-900 via-blue-900 to-indigo-900 bg-clip-text text-transparent">
+                            Weather Data
+                        </h1>
+                        <p className="text-gray-600 mt-1">Real-time weather information for major cities</p>
+                    </div>
                     <Link
                         href="/"
-                        className="text-blue-600 hover:text-blue-700 font-medium"
+                        className="inline-flex items-center space-x-2 px-4 py-2 bg-white text-blue-600 font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-200 border border-blue-200 hover:border-blue-300"
                     >
-                        ← Back to Dashboard
+                        <ArrowLeft className="h-4 w-4" />
+                        <span>Back to Dashboard</span>
                     </Link>
                 </div>
 
                 {loading && weatherData.length === 0 ? (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                        <Loader2 className="h-8 w-8 animate-spin text-blue-600 mx-auto mb-4" />
-                        <p className="text-gray-600">Loading weather data...</p>
+                    <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-16 text-center">
+                        <Loader2 className="h-12 w-12 animate-spin text-blue-600 mx-auto mb-4" />
+                        <p className="text-gray-600 font-medium">Loading weather data...</p>
                     </div>
                 ) : error ? (
-                    <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-12 text-center">
-                        <p className="text-red-600 mb-4">{error}</p>
+                    <div className="bg-white rounded-xl shadow-lg border border-red-200 p-12 text-center">
+                        <div className="mb-4">
+                            <CloudRain className="h-12 w-12 text-red-500 mx-auto mb-4" />
+                            <p className="text-red-600 font-semibold text-lg mb-2">{error}</p>
+                        </div>
                         <button
                             onClick={fetchWeatherData}
-                            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                            className="inline-flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-indigo-600 text-white font-semibold rounded-lg hover:shadow-lg transition-all duration-200"
                         >
-                            Retry
+                            <RefreshCw className="h-4 w-4" />
+                            <span>Retry</span>
                         </button>
                     </div>
                 ) : (
                     <>
                         {/* Weather Table */}
-                        <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+                        <div className="bg-white rounded-xl shadow-lg border border-gray-200 overflow-hidden">
+                            <div className="px-6 py-5 border-b border-gray-200 bg-gradient-to-r from-gray-50 to-blue-50">
+                                <h2 className="text-xl font-bold text-gray-900">Weather Data</h2>
+                            </div>
                             <div className="overflow-x-auto">
                                 <table className="w-full">
-                                    <thead className="bg-gray-50">
+                                    <thead className="bg-gradient-to-r from-gray-50 to-slate-50">
                                         <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                                                 City Name
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                                                 Temperature
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                                                 Wind Speed
                                             </th>
-                                            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                                            <th className="px-6 py-4 text-left text-xs font-bold text-gray-700 uppercase tracking-wider">
                                                 Last Updated
                                             </th>
                                         </tr>
                                     </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
-                                        {displayData.map((data, index) => (
+                                    <tbody className="bg-white divide-y divide-gray-100">
+                                        {displayData.map((data) => (
                                             <tr
                                                 key={data.city}
-                                                className={`transition-colors duration-150 hover:bg-blue-50 ${index % 2 === 0 ? 'bg-white' : 'bg-gray-50'
-                                                    }`}
+                                                className="transition-all duration-150 hover:bg-gradient-to-r hover:from-blue-50 hover:to-indigo-50 group"
                                             >
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <div className="flex items-center space-x-2">
+                                                    <div className="flex items-center space-x-3">
                                                         {getWeatherIcon(data.temperature)}
-                                                        <span className="text-sm font-medium text-gray-900">{data.city}</span>
+                                                        <span className="text-sm font-semibold text-gray-900 group-hover:text-blue-900">
+                                                            {data.city}
+                                                        </span>
                                                     </div>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm text-gray-900">
-                                                    {data.temperature !== null && data.temperature !== undefined ? `${data.temperature}°C` : 'N/A'}
+                                                    <span className={`text-sm font-semibold ${getTemperatureColor(data.temperature)}`}>
+                                                        {data.temperature !== null && data.temperature !== undefined 
+                                                            ? `${data.temperature}°C` 
+                                                            : 'N/A'}
                                                     </span>
                                                 </td>
                                                 <td className="px-6 py-4 whitespace-nowrap">
-                                                    <span className="text-sm text-gray-900">
-                                                    {data.windSpeed != null ? `${data.windSpeed} km/h` : 'N/A'}
-                                                    </span>
+                                                    <div className="flex items-center space-x-2">
+                                                        <Wind className="h-4 w-4 text-gray-400" />
+                                                        <span className="text-sm font-medium text-gray-900">
+                                                            {data.windSpeed != null ? `${data.windSpeed} km/h` : 'N/A'}
+                                                        </span>
+                                                    </div>
                                                 </td>
-                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                                                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 group-hover:text-gray-900">
                                                     {data.lastUpdated !== 'N/A' 
                                                         ? new Date(data.lastUpdated).toLocaleString()
                                                         : 'N/A'}
@@ -155,11 +180,11 @@ export default function WeatherPage() {
                             </div>
                         </div>
 
-                        {/* Last Sync Timestamp */}
+                        {/* Last Sync Timestamp - Below the table as per requirements */}
                         {lastSync && (
                             <div className="mt-6 text-center">
                                 <p className="text-sm text-gray-600">
-                                    Last sync at <span className="font-medium text-gray-900">{lastSync}</span>
+                                    Last sync at <span className="font-semibold text-gray-900">{lastSync}</span>
                                 </p>
                             </div>
                         )}
